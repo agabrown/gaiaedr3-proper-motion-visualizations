@@ -6,12 +6,17 @@
 #
 # 1 ffmpeg command
 # 2 generate black backgrond image (stream [0:v])
-# 3 first frame is static for a few seconds (stream [1:v])
-# 4 input frames for full animation (stream [2:v])
-# 5 start complex filter operating on the three above streams
-# 6 put background behind static frame (stream [v0])
-# 7 put background behind animation (stream [v1])
-# 8 concatenate the two previous streams
+# 3 title frame is kept static for 3 seconds (stream [1:v])
+# 4 frame with text explanation is kept static for 7 seconds (stream [2:v])
+# 5 start frame with star positions is static for 3 seconds (stream [3:v])
+# 6 input frames for full animation (stream [4:v])
+# 7 start complex filter operating on the above streams
+# 8 fade out title frame during 1 second (starting after 2 seconds) and store in [v0]
+# 9 fade in text frame and fade it out after 6 seconds, store in [v1]
+# 10 put black background behind the start frame, store in [v2]
+# 11 put black background behind the animation frames and keep last frame frozen for 3 seconds, store in [v3]
+# 12 put black background behind the endframe, store in [v4]
+# 13 concatenate the streams v0-v4
 
 USAGE="Usage: makevideo [-k] [-h]"
 USAGELONG="Usage: makevideo [-k] [-h]\n -k produce 4K video\n -h help\n"
