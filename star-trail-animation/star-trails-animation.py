@@ -87,8 +87,8 @@ def init(args):
     for i, t1 in zip(range(n_epochs_endframe), epochs_endframe):
         ra1, dec1 = epp.propagate_pos(ra0, dec0, plx0, pmra0, pmdec0, vrad0, t0, t1)
         l1ef[:,i], b1ef[:,i] = ct.transformSkyCoordinates(ra1, dec1)
-    l1ef = np.rad2deg(l1)
-    b1ef = np.rad2deg(b1)
+    l1ef = np.rad2deg(l1ef)
+    b1ef = np.rad2deg(b1ef)
 
     magrange = mag.max()-mag.min()
     magscaling_stars = 0.2+0.8*(mag.max()-mag)/magrange
