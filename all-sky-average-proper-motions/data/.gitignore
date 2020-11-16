@@ -1,0 +1,6 @@
+*.fits
+*.vot
+*.csv
+*.fits.gz
+*.vot.gz
+*.csv.gz
