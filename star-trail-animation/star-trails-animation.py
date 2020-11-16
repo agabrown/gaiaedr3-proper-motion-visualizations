@@ -272,7 +272,6 @@ if __name__ in ('__main__'):
     config = init(args)
     make_start_frame(config)
     make_end_frame(config)
-    exit()
 
     n_epochs = config['l1'].shape[1]
     max_cores = min(cpu_count(), args['max_cores'])
