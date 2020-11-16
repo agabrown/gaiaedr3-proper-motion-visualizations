@@ -39,12 +39,10 @@ def make_plot(args):
 
     if args['highres']:
         fdpi=240
-        dr2sky = plt.imread('/home/brown/Gaia/Presentation/Images/GaiaSky/GaiaDR2/ESA-PR/' +
-                'ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_4000x2000.png')
+        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_4000x2000.png')
     else:
         fdpi=120
-        dr2sky = plt.imread('/home/brown/Gaia/Presentation/Images/GaiaSky/GaiaDR2/ESA-PR/' +
-                'ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
+        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
 
     # Read input file (for now the Gaia EDR3 6D-gold sample from which a random selection of stars within 100 pc is
     # selected.

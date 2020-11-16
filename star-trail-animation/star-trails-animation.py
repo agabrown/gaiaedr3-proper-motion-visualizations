@@ -50,13 +50,11 @@ def init(args, default_proj, sky_proj):
     max_plot_epochs = args['max_plot_epochs']
     if args['highres']:
         fdpi=240
-        dr2sky = plt.imread('/home/brown/Gaia/Presentation/Images/GaiaSky/GaiaDR2/ESA-PR/' +
-                'ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_4000x2000.png')
+        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_4000x2000.png')
         imfolder = "images-4k"
     else:
         fdpi=120
-        dr2sky = plt.imread('/home/brown/Gaia/Presentation/Images/GaiaSky/GaiaDR2/ESA-PR/' +
-                'ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
+        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
         imfolder = "images-2k"
 
 
