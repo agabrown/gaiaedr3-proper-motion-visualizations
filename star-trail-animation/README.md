@@ -5,6 +5,11 @@ stars on the sky over a certain time interval T, starting from the Gaia EDR3 ref
 displacements are animated as short trails, which illustrate the displacement over a short interval t&lt;T, and which
 flow along the full trajectory of the star on the sky, as defined by T.
 
+## Credits
+
+Original idea by Stefan Jordan. Python code and video by Anthony Brown. Ideas for improvement contributed by Tineke
+Roegiers, Xavier Luri, Eduard Masana, Timo Prusti.
+
 ## Dependencies
 
 * [numpy](https://numpy.org/)
