@@ -1,7 +1,9 @@
 # star-trail-animation
 
-Python code to reproduce the visualization of proper motions in Gaia EDR3 with a video showing as trails the
-displacements of stars on the sky, over a fixed time interval.
+Python code to reproduce the visualization of proper motions in Gaia EDR3. Produces a video showing the displacements of
+stars on the sky over a certain time interval T, starting from the Gaia EDR3 reference epoch of J2016.0. The
+displacements are animated as short trails, which illustrate the displacement over a short interval t&lt;T, and which
+flow along the full trajectory of the star on the sky, as defined by T.
 
 ## Dependencies
 
@@ -10,6 +12,7 @@ displacements of stars on the sky, over a fixed time interval.
 * [Astropy](https://www.astropy.org/)
 * [Cartopy](https://scitools.org.uk/cartopy/docs/latest/)
 * [PyGaia](https://github.com/agabrown/PyGaia)
+* [ffmpeg](https://ffmpeg.org/)
 
 ## Input data needed
 
