@@ -33,8 +33,8 @@ group by healpix_5
 The [AllSkyProperMotionMap](AllSkyProperMotionMap.ipynb) notebook shows how to create the streamline plot visualizing the
 average proper motions.
 
-The [ExpectedKinematicSkyMaps](ExpectedKinematicSkyMaps.ipynb) presents a very simplistic model for the Milky Way disk
-kinematics that can predict the gross features seen in the proper motion (and radial velocity) data.
+The [ExpectedKinematicSkyMaps](ExpectedKinematicSkyMaps.ipynb) notebook presents a very simplistic model for the Milky
+Way disk kinematics that can predict the gross features seen in the proper motion (and radial velocity) data.
 
 ## Python code
 
