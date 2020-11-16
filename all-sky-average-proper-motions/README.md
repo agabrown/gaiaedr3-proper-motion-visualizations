@@ -10,6 +10,7 @@ galactic differential rotation and the sun's peculiar motion as seen in the data
 * [Astropy](https://www.astropy.org/)
 * [astropy-healpix](https://astropy-healpix.readthedocs.io/)
 * [Cartopy](https://scitools.org.uk/cartopy/docs/latest/)
+* [healpy](https://github.com/healpy/healpy)
 
 ## Extracting the mean proper motions from the Gaia archive
 
