@@ -5,4 +5,6 @@ this Github repository. The images used for the Gaia EDR3 animation can be found
 
 https://sci.esa.int/s/ApPJaGA
 
-The 2000x1000 and 4000x2000 versions were used for the HD and 4K videos, respectively.
+The 2000x1000 and 4000x2000 versions were used for the [Full
+HD](https://en.wikipedia.org/wiki/Graphics_display_resolution#FHD) and [4K
+UHD](https://en.wikipedia.org/wiki/Graphics_display_resolution#4K_UHD) videos, respectively.
