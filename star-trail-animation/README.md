@@ -33,7 +33,7 @@ The [notebook](StarTrailsOnSky.ipynb) explains the basics of rendering the frame
 
 ## Generating the animation frames
 
-This is done by running [`star-trails-animation.py`](start-trails-animation.py) from the command line. A few examples follow.
+This is done by running [`star-trails-animation.py`](star-trails-animation.py) from the command line. A few examples follow.
 
 #### Usage information
 
