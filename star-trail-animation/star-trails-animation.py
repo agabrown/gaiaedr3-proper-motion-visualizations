@@ -263,6 +263,8 @@ def parseCommandLineArguments():
     parser.add_argument('--rngseed', type=int, nargs='?', default=53949896, help="""Random number generator seed (default 53949896)""")
     parser.add_argument('-4k', action="store_true", dest="highres", 
             help="""Generate frames for a 4K UHD video (default is Full HD)""", default=False)
+    parser.add_argument('--start_end_only', action="store_true", dest="startendonly", 
+            help="""Generate start and end frames only""", default=False)
     args = vars(parser.parse_args())
     return args
 
@@ -272,6 +274,9 @@ if __name__ in ('__main__'):
     config = init(args)
     make_start_frame(config)
     make_end_frame(config)
+    if args['startendonly']:
+        print('Only generated start and end frames!')
+        exit()
 
     n_epochs = config['l1'].shape[1]
     max_cores = min(cpu_count(), args['max_cores'])

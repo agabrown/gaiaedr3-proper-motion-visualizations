@@ -62,7 +62,7 @@ future and the star trails are shown over 80000 years each (fraction 20/400 of 1
 the star trails over 400000 years. The frames are intended for video at 4K UHD resolution.
 
 ```
-python star-trails-animation.py StarTrailVideoSample.fits --exposure 16 --exposure_endframe 4 --nstars_max=40000 --max_alpha=0.4 --num_epochs=400 --max_plot_epochs 20 -4k
+python star-trails-animation.py StarTrailVideoSample.fits --exposure 16 --exposure_endframe 4 --nstars_max=40000 --max_alpha=0.4 --num_epochs=400 --max_trail_epochs 20 -4k
 ```
 
 The input data was retrieved from the Gaia archive with the following query:
