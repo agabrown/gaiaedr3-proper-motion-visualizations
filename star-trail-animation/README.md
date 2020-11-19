@@ -77,7 +77,7 @@ and dr2_rv_nb_transits > 3
 and bp_rp is not null
 ```
 
-The background images are expected to be stores in the [sky-images](./sky-images/README.md) folder. The
+The background images are expected to be stores in the [sky-images](./sky-images/) folder. The
 names are hard-coded in the Python programme as `GaiaSky-colour-2k.png` and `GaiaSky-colour-4k.png`.
 
 ## Generating the video
