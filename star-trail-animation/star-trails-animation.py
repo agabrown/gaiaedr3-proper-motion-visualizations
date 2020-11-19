@@ -48,11 +48,11 @@ def init(args):
     max_trail_epochs = args['max_trail_epochs']
     if args['highres']:
         fdpi=240
-        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_4000x2000.png')
+        dr2sky = plt.imread('./sky-images/GaiaSky-colour-4k.png')
         imfolder = "images-4k"
     else:
         fdpi=120
-        dr2sky = plt.imread('./sky-images/ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
+        dr2sky = plt.imread('./sky-images/GaiaSky-colour-2k.png')
         imfolder = "images-2k"
 
     data = Table.read('./data/'+infile, format='fits')
