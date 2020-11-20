@@ -52,8 +52,7 @@ def make_plot(args):
     defaultProj = ccrs.PlateCarree()
     skyProj = ccrs.Mollweide()
 
-    backgr = plt.imread('../star-trail-animation/sky-images/' +
-            'ESA_Gaia_DR2_AllSky_Brightness_Colour_Cartesian_2000x1000.png')
+    backgr = plt.imread('../star-trail-animation/sky-images/GaiaSky-colour-2k.png')
 
     nside = hp.order2nside(args['hplevel'])
     hpcol = 'healpix_{0}'.format(args['hplevel'])
@@ -79,9 +78,15 @@ def make_plot(args):
                 transform=defaultProj, angles='xy', scale=vscale, scale_units='dots', color='w',
                 headwidth=1, headlength=3, headaxislength=2.5)
     else:
-        ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                transform=defaultProj, linewidth=1.5, density=2, color='w', maxlength=0.5, arrowsize=1,
-                arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+        if args['colourstreams']:
+            pmtot = np.sqrt(galactic.pm_l_cosb.value**2 + galactic.pm_b.value**2)
+            ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
+                    transform=defaultProj, linewidth=2.0, density=2, color=pmtot, cmap='viridis', maxlength=0.5,
+                    arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+        else:
+            ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
+                    transform=defaultProj, linewidth=1.5, density=2, color='w', maxlength=0.5, arrowsize=1,
+                    arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
     ax.invert_xaxis()
 
     if args['pdfOutput']:
@@ -99,6 +104,8 @@ def parseCommandLineArguments():
     parser.add_argument('inputFile', type=str, help="""VOT file with proper motion stats by Healpix.""")
     parser.add_argument('hplevel', type=int, nargs='?', default=4, help="""Healpix level of input table.""")
     parser.add_argument('--vectors', action="store_true", dest="quiver", help="Plot vectors instead of streamlines")
+    parser.add_argument('--colourcode', action='store_true', dest='colourstreams', help="""Plot streamlines colour coded
+    by magnitude of proper motion""")
     parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
     parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
     args = vars(parser.parse_args())
