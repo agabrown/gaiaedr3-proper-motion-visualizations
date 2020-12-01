@@ -11,7 +11,7 @@ where parallax_over_error>=10
 and parallax*parallax - 2*parallax - parallax_error*parallax_error < -1
 group by healpix_5
 
-Anthony Brown Oct 2020 - Nov 2020
+Anthony Brown Oct 2020 - Dec 2020
 """
 
 import numpy as np
@@ -64,28 +64,34 @@ def make_plot(args):
 
     icrs = ICRS(ra=alpha*u.degree, dec=delta*u.degree, pm_ra_cosdec=pmra*u.mas/u.yr, pm_dec=pmdec*u.mas/u.yr)
     galactic = icrs.transform_to(Galactic)
+    pmtot = np.sqrt(galactic.pm_l_cosb.value**2 + galactic.pm_b.value**2)
 
     fig=plt.figure(figsize=(16,9), dpi=120, frameon=False, tight_layout={'pad':0.01})
     gs = GridSpec(1, 1, figure=fig)
     ax = fig.add_subplot(gs[0,0], projection=skyProj)
-
     ax.imshow(np.fliplr(backgr), transform=defaultProj, zorder=-1, origin='upper')
-    pmtot = (galactic.pm_l_cosb.value ** 2 + galactic.pm_b.value ** 2) ** 0.5
-    pmcmap = cm.summer
+    pmcmap = cm.viridis
+    veccolor = plt.cm.get_cmap('tab10').colors[9]
+    linecolor = 'w' #plt.cm.get_cmap('tab10').colors[9]
+
     if args['quiver']:
         vscale = np.median(pmtot)/10
         ax.quiver(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                transform=defaultProj, angles='xy', scale=vscale, scale_units='dots', color='w',
+                transform=defaultProj, angles='xy', scale=vscale, scale_units='dots', color=veccolor,
                 headwidth=1, headlength=3, headaxislength=2.5)
     else:
         if args['colourstreams']:
-            pmtot = np.sqrt(galactic.pm_l_cosb.value**2 + galactic.pm_b.value**2)
             ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                    transform=defaultProj, linewidth=2.0, density=2, color=pmtot, cmap='viridis', maxlength=0.5,
+                    transform=defaultProj, linewidth=2.0, density=2, color=pmtot, cmap=pmcmap, maxlength=0.5,
                     arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+        elif args['lwcode'] > 0:
+            ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
+                    transform=defaultProj, linewidth=args['lwcode']*pmtot/np.median(pmtot), density=2, color=linecolor,
+                    maxlength=0.5, arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4,
+                        tail_width=.4))
         else:
             ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                    transform=defaultProj, linewidth=1.5, density=2, color='w', maxlength=0.5, arrowsize=1,
+                    transform=defaultProj, linewidth=1.5, density=2, color=linecolor, maxlength=0.5, arrowsize=1,
                     arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
     ax.invert_xaxis()
 
@@ -106,6 +112,8 @@ def parseCommandLineArguments():
     parser.add_argument('--vectors', action="store_true", dest="quiver", help="Plot vectors instead of streamlines")
     parser.add_argument('--colourcode', action='store_true', dest='colourstreams', help="""Plot streamlines colour coded
     by magnitude of proper motion""")
+    parser.add_argument('--lwcode', type=float, default=0.0, help="""Plot streamlines with the width indicating the
+    magnitude of proper motion. Scale the widths by the factor provided""")
     parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
     parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
     args = vars(parser.parse_args())
