@@ -40,4 +40,4 @@ Way disk kinematics that can predict the gross features seen in the proper motio
 ## Python code
 
 The [`proper-motion-map.py`](proper-motion-map.py) python code can be invoked from the command line for creating the all
-sky proper motion maps.
+sky proper motion maps. It offers a bit more flexibility to configure the plot.

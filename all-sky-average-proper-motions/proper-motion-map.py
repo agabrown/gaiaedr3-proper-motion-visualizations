@@ -14,22 +14,19 @@ group by healpix_5
 Anthony Brown Oct 2020 - Dec 2020
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import cm, rc_file_defaults
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize, LogNorm
-from matplotlib.patches import ArrowStyle
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.gridspec import GridSpec
 import argparse
 
-import cartopy.crs as ccrs
-
-from astropy.coordinates import ICRS, Galactic
-from astropy.table import Table
 import astropy.units as u
 import astropy_healpix.healpy as hp
+import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy.coordinates import ICRS, Galactic
+from astropy.table import Table
+from matplotlib import cm
+from matplotlib.gridspec import GridSpec
+from matplotlib.patches import ArrowStyle
+
 
 def make_plot(args):
     """
@@ -38,7 +35,7 @@ def make_plot(args):
     Parameters
     ----------
 
-    args: array-like
+    args: dict
         Command line arguments
 
     Returns
@@ -46,11 +43,11 @@ def make_plot(args):
 
     Nothing
     """
-    infile = './data/'+args['inputFile']
+    infile = './data/' + args['inputFile']
     basename = 'PMmap-' + args['inputFile'].split('.')[0]
 
-    defaultProj = ccrs.PlateCarree()
-    skyProj = ccrs.Mollweide()
+    default_proj = ccrs.PlateCarree()
+    sky_proj = ccrs.Mollweide()
 
     backgr = plt.imread('../star-trail-animation/sky-images/GaiaSky-colour-2k.png')
 
@@ -62,47 +59,50 @@ def make_plot(args):
     pmra = edr3data['avg_pmra']
     pmdec = edr3data['avg_pmdec']
 
-    icrs = ICRS(ra=alpha*u.degree, dec=delta*u.degree, pm_ra_cosdec=pmra*u.mas/u.yr, pm_dec=pmdec*u.mas/u.yr)
+    icrs = ICRS(ra=alpha * u.degree, dec=delta * u.degree, pm_ra_cosdec=pmra * u.mas / u.yr,
+                pm_dec=pmdec * u.mas / u.yr)
     galactic = icrs.transform_to(Galactic)
-    pmtot = np.sqrt(galactic.pm_l_cosb.value**2 + galactic.pm_b.value**2)
+    pmtot = np.sqrt(galactic.pm_l_cosb.value ** 2 + galactic.pm_b.value ** 2)
 
-    fig=plt.figure(figsize=(16,9), dpi=120, frameon=False, tight_layout={'pad':0.01})
+    fig = plt.figure(figsize=(16, 9), dpi=120, frameon=False, tight_layout={'pad': 0.01})
     gs = GridSpec(1, 1, figure=fig)
-    ax = fig.add_subplot(gs[0,0], projection=skyProj)
-    ax.imshow(np.fliplr(backgr), transform=defaultProj, zorder=-1, origin='upper')
+    ax = fig.add_subplot(gs[0, 0], projection=sky_proj)
+    ax.imshow(np.fliplr(backgr), transform=default_proj, zorder=-1, origin='upper')
     pmcmap = cm.viridis
     veccolor = plt.cm.get_cmap('tab10').colors[9]
-    linecolor = 'w' #plt.cm.get_cmap('tab10').colors[9]
+    linecolor = 'w'  # plt.cm.get_cmap('tab10').colors[9]
 
     if args['quiver']:
-        vscale = np.median(pmtot)/10
+        vscale = np.median(pmtot) / 10
         ax.quiver(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                transform=defaultProj, angles='xy', scale=vscale, scale_units='dots', color=veccolor,
-                headwidth=1, headlength=3, headaxislength=2.5)
+                  transform=default_proj, angles='xy', scale=vscale, scale_units='dots', color=veccolor,
+                  headwidth=1, headlength=3, headaxislength=2.5)
     else:
         if args['colourstreams']:
             ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                    transform=defaultProj, linewidth=2.0, density=2, color=pmtot, cmap=pmcmap, maxlength=0.5,
-                    arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+                          transform=default_proj, linewidth=2.0, density=2, color=pmtot, cmap=pmcmap, maxlength=0.5,
+                          arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
         elif args['lwcode'] > 0:
             ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                    transform=defaultProj, linewidth=args['lwcode']*pmtot/np.median(pmtot), density=2, color=linecolor,
-                    maxlength=0.5, arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4,
-                        tail_width=.4))
+                          transform=default_proj, linewidth=args['lwcode'] * pmtot / np.median(pmtot), density=2,
+                          color=linecolor,
+                          maxlength=0.5, arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4,
+                                                                                  tail_width=.4))
         else:
             ax.streamplot(galactic.l.value, galactic.b.value, galactic.pm_l_cosb.value, galactic.pm_b.value,
-                    transform=defaultProj, linewidth=1.5, density=2, color=linecolor, maxlength=0.5, arrowsize=1,
-                    arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+                          transform=default_proj, linewidth=1.5, density=2, color=linecolor, maxlength=0.5, arrowsize=1,
+                          arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
     ax.invert_xaxis()
 
     if args['pdfOutput']:
-        plt.savefig(basename+'.pdf')
+        plt.savefig(basename + '.pdf')
     elif args['pngOutput']:
-        plt.savefig(basename+'.png')
+        plt.savefig(basename + '.png')
     else:
         plt.show()
 
-def parseCommandLineArguments():
+
+def parse_command_line_arguments():
     """
     Set up command line parsing.
     """
@@ -119,6 +119,7 @@ def parseCommandLineArguments():
     args = vars(parser.parse_args())
     return args
 
-if __name__ in ('__main__'):
-    args=parseCommandLineArguments()
-    make_plot(args)
+
+if __name__ in '__main__':
+    cmdargs = parse_command_line_arguments()
+    make_plot(cmdargs)

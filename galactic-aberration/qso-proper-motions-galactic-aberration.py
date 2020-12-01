@@ -8,19 +8,17 @@ the paper to calculate the apparent proper motions.
 Anthony Brown Nov 2020 - Dec 2020
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
-from matplotlib.patches import ArrowStyle
-
 import argparse
 
-from astropy_healpix import HEALPix
-import astropy_healpix.healpy as hp
-from astropy.coordinates import Galactic
 import astropy.units as u
-
+import astropy_healpix.healpy as hp
 import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy.coordinates import Galactic
+from astropy_healpix import HEALPix
+from matplotlib.gridspec import GridSpec
+from matplotlib.patches import ArrowStyle
 
 
 def make_plot(args):
@@ -57,51 +55,52 @@ def make_plot(args):
 
     pm_l_cosb = -gx * np.sin(skycoords.l.to(u.rad)) + gy * np.cos(skycoords.l.to(u.rad))
     pm_b = -gx * np.sin(skycoords.b.to(u.rad)) * np.cos(skycoords.l.to(u.rad)) \
-          -gy * np.sin(skycoords.b.to(u.rad)) * np.sin(skycoords.l.to(u.rad)) \
-          +gz * np.cos(skycoords.b.to(u.rad))
-    pmtot = np.sqrt(pm_l_cosb**2 + pm_b**2)
+           - gy * np.sin(skycoords.b.to(u.rad)) * np.sin(skycoords.l.to(u.rad)) \
+           + gz * np.cos(skycoords.b.to(u.rad))
+    pmtot = np.sqrt(pm_l_cosb ** 2 + pm_b ** 2)
 
     backgr = plt.imread('../star-trail-animation/sky-images/GaiaSky-colour-2k.png')
 
-    defaultProj = ccrs.PlateCarree()
-    skyProj = ccrs.Mollweide()
-        
-    fig=plt.figure(figsize=(16,9), dpi=120, frameon=False, tight_layout={'pad':0.01})
+    default_proj = ccrs.PlateCarree()
+    sky_proj = ccrs.Mollweide()
+
+    fig = plt.figure(figsize=(16, 9), dpi=120, frameon=False, tight_layout={'pad': 0.01})
     gs = GridSpec(1, 1, figure=fig)
-    ax = fig.add_subplot(gs[0,0], projection=skyProj)
-    ax.imshow(np.fliplr(backgr), transform=defaultProj, zorder=-1, origin='upper')
+    ax = fig.add_subplot(gs[0, 0], projection=sky_proj)
+    ax.imshow(np.fliplr(backgr), transform=default_proj, zorder=-1, origin='upper')
     veccolor = plt.cm.get_cmap('tab10').colors[9]
-    linecolor = 'w' #plt.cm.get_cmap('tab10').colors[9]
+    linecolor = 'w'  # plt.cm.get_cmap('tab10').colors[9]
 
     if args['quiver']:
-        vscale = np.median(pmtot)/50
-        ax.quiver(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=defaultProj, angles='xy',
-                scale=vscale, scale_units='dots', color=veccolor, headwidth=4, headlength=4, headaxislength=3.5)
+        vscale = np.median(pmtot) / 50
+        ax.quiver(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=default_proj, angles='xy',
+                  scale=vscale, scale_units='dots', color=veccolor, headwidth=4, headlength=4, headaxislength=3.5)
     else:
         if args['colourstreams']:
-            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=defaultProj, linewidth=2.0,
-                    density=2, color=pmtot, cmap='viridis', maxlength=0.5, arrowsize=1,
-                    arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=default_proj, linewidth=2.0,
+                          density=2, color=pmtot, cmap='viridis', maxlength=0.5, arrowsize=1,
+                          arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
         elif args['lwcode'] > 0:
-            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=defaultProj,
-                    linewidth=args['lwcode']*pmtot/np.median(pmtot), density=2, color=linecolor, maxlength=0.5,
-                    arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=default_proj,
+                          linewidth=args['lwcode'] * pmtot / np.median(pmtot), density=2, color=linecolor,
+                          maxlength=0.5,
+                          arrowsize=1, arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
         else:
-            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=defaultProj, linewidth=1.5,
-                    density=2.5, color=linecolor, maxlength=0.5, arrowsize=1,
-                    arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
-    #ax.gridlines()
+            ax.streamplot(skycoords.l.value, skycoords.b.value, pm_l_cosb, pm_b, transform=default_proj, linewidth=1.5,
+                          density=2.5, color=linecolor, maxlength=0.5, arrowsize=1,
+                          arrowstyle=ArrowStyle.Fancy(head_length=1.0, head_width=.4, tail_width=.4))
+    # ax.gridlines()
     ax.invert_xaxis()
 
     if args['pdfOutput']:
-        plt.savefig(basename+'.pdf')
+        plt.savefig(basename + '.pdf')
     elif args['pngOutput']:
-        plt.savefig(basename+'.png')
+        plt.savefig(basename + '.png')
     else:
         plt.show()
 
 
-def parseCommandLineArguments():
+def parse_command_line_arguments():
     """
     Set up command line parsing.
     """
@@ -117,6 +116,6 @@ def parseCommandLineArguments():
     return args
 
 
-if __name__ in ('__main__'):
-    args=parseCommandLineArguments()
-    make_plot(args)
+if __name__ in '__main__':
+    cmdargs = parse_command_line_arguments()
+    make_plot(cmdargs)
