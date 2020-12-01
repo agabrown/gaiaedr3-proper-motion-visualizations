@@ -69,7 +69,7 @@ def make_plot(args):
     ax = fig.add_subplot(gs[0, 0], projection=sky_proj)
     ax.imshow(np.fliplr(backgr), transform=default_proj, zorder=-1, origin='upper')
     veccolor = plt.cm.get_cmap('tab10').colors[9]
-    linecolor = 'w'  # plt.cm.get_cmap('tab10').colors[9]
+    linecolor = plt.cm.get_cmap('tab10').colors[9]
 
     if args['quiver']:
         vscale = np.median(pmtot) / 50

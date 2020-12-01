@@ -70,7 +70,7 @@ def make_plot(args):
     ax.imshow(np.fliplr(backgr), transform=default_proj, zorder=-1, origin='upper')
     pmcmap = cm.viridis
     veccolor = plt.cm.get_cmap('tab10').colors[9]
-    linecolor = 'w'  # plt.cm.get_cmap('tab10').colors[9]
+    linecolor = plt.cm.get_cmap('tab10').colors[9]
 
     if args['quiver']:
         vscale = np.median(pmtot) / 10
