@@ -6,7 +6,7 @@ displacements are animated as short trails, which illustrate the displacement ov
 flow along the full trajectory of the star on the sky, as defined by T.
 
 > **2022.12.30**
-> The code and data were updated to make us of Gaia DR3 (with the new radial velocities) instead of Gaia EDR3.
+> The code and data were updated to make use of Gaia DR3 (with the new radial velocities) instead of Gaia EDR3.
 
 ## Credits
 
