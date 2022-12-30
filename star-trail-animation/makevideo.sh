@@ -2,7 +2,7 @@
 
 # Create the star trail animation from the individual png images.
 
-# Steps taken in the ffmpeg lines below
+# Steps taken in the ffmpeg lines below (first block including title and explanation frames):
 #
 # 1 ffmpeg command
 # 2 generate black backgrond image (stream [0:v])
@@ -19,15 +19,33 @@
 # 13 concatenate the streams v0-v4
 
 USAGE="Usage: makevideo [-k] [-h]"
-USAGELONG="Usage: makevideo [-k] [-h]\n -k produce 4K video\n -h help\n"
+USAGELONG="Usage: makevideo [-k] [-a] [-c] [-t] [-h]\n -k Produce 4K video\n -a Use HAP video codec\n -c Crop for panorama projection Rabo Studio (center screen)\n -t Include title and explanation frames\n -h help\n"
 RESOLUTION="1920x1080"
+RESFACTOR=1
 IMFOLDER="images-2k"
+CODEC="libx264"
+PIX_FMT="yuv420p"
+EXTENSION="mp4"
+COMPR=""
+CROP=false
+CROPSTR=""
+TITLES=false
 
-while getopts "kh" options;
+while getopts "kacth" options;
 do
     case $options in
         k) RESOLUTION="3840x2160"
+            RESFACTOR=2
             IMFOLDER="images-4k"
+            ;;
+        a) CODEC="hap"
+            PIX_FMT="rgba"
+            EXTENSION="mov"
+            COMPR="-compressor snappy"
+            ;;
+        c) CROP=true
+            ;;
+        t) TITLES=true
             ;;
         h)
             echo -e $USAGELONG
@@ -41,18 +59,38 @@ do
 done
 shift $(($OPTIND-1))
 
+if $CROP
+then
+    W=$((1860*$RESFACTOR))
+    H=$((552*$RESFACTOR))
+    CROPSTR=",crop=${W}:${H}"
+fi
 
-ffmpeg \
-    -f lavfi -i "color=c=black:s=${RESOLUTION}:r=25" \
-    -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/edr3-title-frame.png" \
-    -loop 1 -framerate 25 -t 7 -i "${IMFOLDER}/star-trail-text-frame.png" \
-    -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/startframe.png" \
-    -framerate 25 -i "${IMFOLDER}/frame%04d.png" \
-    -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/endframe.png" \
-    -filter_complex \
-    "[1:v]fade=type=out:duration=1:start_time=2,format=yuv420p[v0]; \
-    [2:v]fade=type=in:duration=1,fade=type=out:duration=1:start_time=6,format=yuv420p[v1]; \
-    [0:v][3:v]overlay=shortest=1,format=yuv420p[v2]; \
-    [0:v][4:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=yuv420p[v3]; \
-    [0:v][5:v]overlay=shortest=1,fade=type=in:duration=1,format=yuv420p[v4]; \
-    [v0][v1][v2][v3][v4]concat=n=5" -vcodec libx264 -s $RESOLUTION trails.mp4
+if $TITLES
+then
+    ffmpeg \
+        -f lavfi -i "color=c=black:s=${RESOLUTION}:r=25" \
+        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/edr3-title-frame.png" \
+        -loop 1 -framerate 25 -t 7 -i "${IMFOLDER}/star-trail-text-frame.png" \
+        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/startframe.png" \
+        -framerate 25 -i "${IMFOLDER}/frame%04d.png" \
+        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/endframe.png" \
+        -filter_complex \
+        "[1:v]fade=type=out:duration=1:start_time=2,format=${PIX_FMT}[v0]; \
+        [2:v]fade=type=in:duration=1,fade=type=out:duration=1:start_time=6,format=${PIX_FMT}[v1]; \
+        [0:v][3:v]overlay=shortest=1,format=${PIX_FMT}[v2]; \
+        [0:v][4:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=${PIX_FMT}[v3]; \
+        [0:v][5:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v4]; \
+        [v0][v1][v2][v3][v4]concat=n=5${CROPSTR}" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
+else
+    ffmpeg \
+        -f lavfi -i "color=c=black:s=${RESOLUTION}:r=25" \
+        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/startframe.png" \
+        -framerate 25 -i "${IMFOLDER}/frame%04d.png" \
+        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/endframe.png" \
+        -filter_complex \
+        "[0:v][1:v]overlay=shortest=1,format=${PIX_FMT}[v0]; \
+        [0:v][2:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=${PIX_FMT}[v1]; \
+        [0:v][3:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v2]; \
+        [v0][v1][v2]concat=n=3${CROPSTR}" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
+fi
