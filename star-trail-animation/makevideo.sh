@@ -19,16 +19,13 @@
 # 13 concatenate the streams v0-v4
 
 USAGE="Usage: makevideo [-k] [-h]"
-USAGELONG="Usage: makevideo [-k] [-a] [-c] [-t] [-h]\n -k Produce 4K video\n -a Use HAP video codec\n -c Crop for panorama projection Rabo Studio (center screen)\n -t Include title and explanation frames\n -h help\n"
+USAGELONG="Usage: makevideo [-k] [-a] [-t] [-h]\n -k Produce 4K video\n -a Use HAP video codec\n -t Include title and explanation frames\n -h help\n"
 RESOLUTION="1920x1080"
-RESFACTOR=1
 IMFOLDER="images-2k"
 CODEC="libx264"
 PIX_FMT="yuv420p"
 EXTENSION="mp4"
 COMPR=""
-CROP=false
-CROPSTR=""
 TITLES=false
 
 while getopts "kacth" options;
@@ -43,8 +40,6 @@ do
             EXTENSION="mov"
             COMPR="-compressor snappy"
             ;;
-        c) CROP=true
-            ;;
         t) TITLES=true
             ;;
         h)
@@ -58,13 +53,6 @@ do
     esac
 done
 shift $(($OPTIND-1))
-
-if $CROP
-then
-    W=$((1860*$RESFACTOR))
-    H=$((552*$RESFACTOR))
-    CROPSTR=",crop=${W}:${H}"
-fi
 
 if $TITLES
 then
@@ -81,16 +69,20 @@ then
         [0:v][3:v]overlay=shortest=1,format=${PIX_FMT}[v2]; \
         [0:v][4:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=${PIX_FMT}[v3]; \
         [0:v][5:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v4]; \
-        [v0][v1][v2][v3][v4]concat=n=5${CROPSTR}" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
+        [v0][v1][v2][v3][v4]concat=n=5" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
 else
     ffmpeg \
         -f lavfi -i "color=c=black:s=${RESOLUTION}:r=25" \
-        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/startframe.png" \
+        -loop 1 -framerate 25 -t 2 -i "${IMFOLDER}/panoramaframe.png" \
+        -loop 1 -framerate 25 -t 4 -i "${IMFOLDER}/startframe.png" \
         -framerate 25 -i "${IMFOLDER}/frame%04d.png" \
-        -loop 1 -framerate 25 -t 3 -i "${IMFOLDER}/endframe.png" \
+        -loop 1 -framerate 25 -t 6 -i "${IMFOLDER}/endframe.png" \
+        -loop 1 -framerate 25 -t 2 -i "${IMFOLDER}/panoramaframe.png" \
         -filter_complex \
         "[0:v][1:v]overlay=shortest=1,format=${PIX_FMT}[v0]; \
-        [0:v][2:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=${PIX_FMT}[v1]; \
-        [0:v][3:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v2]; \
-        [v0][v1][v2]concat=n=3${CROPSTR}" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
+        [0:v][2:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v1]; \
+        [0:v][3:v]overlay=shortest=1,tpad=stop_mode=clone:stop_duration=3,format=${PIX_FMT}[v2]; \
+        [0:v][4:v]overlay=shortest=1,fade=type=in:duration=1,fade=type=out:start_time=5:duration=1,format=${PIX_FMT}[v3]; \
+        [0:v][5:v]overlay=shortest=1,fade=type=in:duration=1,format=${PIX_FMT}[v4]; \
+        [v0][v1][v2][v3][v4]concat=n=5" -vcodec $CODEC -s $RESOLUTION $COMPR trails.$EXTENSION
 fi

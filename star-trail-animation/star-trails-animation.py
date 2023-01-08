@@ -1,7 +1,6 @@
 """
 Produce an animation of the Gaia DR3 sky overlaid with the star trails from a hypothetical long exposure. The trails are based on Gaia DR3 proper motions and radial velocities. After an idea originally form Stefan Jordan.
-
-Anthony Brown Nov 2020 - Dec 2022
+Anthony Brown Nov 2020 - Jan 2023
 """
 from multiprocessing import Pool, cpu_count
 
@@ -117,6 +116,41 @@ def init(args):
         "default_projection": ccrs.PlateCarree(),
         "sky_projection": ccrs.Mollweide(),
     }
+
+
+def make_mwpanorama_frame(config):
+    """
+    Produce a frame containing only the Milky Way panorama.
+
+    Parameters
+    ----------
+
+    config: dictionary
+        Configuration of the animation
+
+    Returns
+    -------
+
+    Nothing
+    """
+    framename = config["imfolder"] + "/panoramaframe.png"
+
+    fig = plt.figure(
+        figsize=(16, 9), dpi=config["dpi"], frameon=False, tight_layout={"pad": 0.01}
+    )
+
+    ax = fig.add_subplot(projection=config["sky_projection"])
+    ax.imshow(
+        np.fliplr(config["backgr"]),
+        transform=config["default_projection"],
+        zorder=-1,
+        origin="upper",
+    )
+    ax.set_global()
+    ax.invert_xaxis()
+
+    plt.savefig(framename)
+    plt.close(fig)
 
 
 def make_start_frame(config):
@@ -431,6 +465,7 @@ if __name__ in "__main__":
     cmdargs = parse_command_line_arguments()
 
     the_config = init(cmdargs)
+    make_mwpanorama_frame(the_config)
     make_start_frame(the_config)
     make_end_frame(the_config)
     if cmdargs["startendonly"]:

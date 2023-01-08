@@ -7,6 +7,7 @@ flow along the full trajectory of the star on the sky, as defined by T.
 
 > **2022.12.30**
 > The code and data were updated to make use of Gaia DR3 (with the new radial velocities) instead of Gaia EDR3.
+> The video without the titles is now set up such that it can loop smoothly.
 
 ## Credits
 
@@ -111,8 +112,8 @@ Videos in HAP format (produces `.mov` files):
 makevideo.sh -a [-t] [-k]
 ```
 
-Videos cropped to image format requested for projection in [Rabo Studio](https://zakelijk.forum.nl/nl/onze-ruimtes/rabo-studio) (3720x1104 pixels for center screen):
+To generate a video in the format requested by [Rabo Studio](https://zakelijk.forum.nl/nl/onze-ruimtes/rabo-studio) (cropped to 3720x1104 pixels so it fits exactly on the center screen):
 ```
-makevideo.sh -c -k [-a] [-t]
+makevideo.sh -k -a
+ffmpeg -i trails.mov -vf "crop=3720:1104" -vcodec hap trails-cropped.mov
 ```
-Without the `-k` option the video will be cropped to 1860x552 pixels.
