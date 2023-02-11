@@ -102,7 +102,7 @@ For 4K UHD video run, including title and explanation frames:
 makevideo.sh -t -k
 ```
 
-Videos without the title frames:
+Videos without the title frames and suitable for smooth looping:
 ```
 makevideo.sh [-k]
 ```
