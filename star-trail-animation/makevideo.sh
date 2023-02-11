@@ -17,9 +17,11 @@
 # 11 put black background behind the animation frames and keep last frame frozen for 3 seconds, store in [v3]
 # 12 put black background behind the endframe, store in [v4]
 # 13 concatenate the streams v0-v4
+#
+# Second block does not include the title frames and makes a video suitable for smooth looping.
 
 USAGE="Usage: makevideo [-k] [-h]"
-USAGELONG="Usage: makevideo [-k] [-a] [-t] [-h]\n -k Produce 4K video\n -a Use HAP video codec\n -t Include title and explanation frames\n -h help\n"
+USAGELONG="Usage: makevideo [-k] [-a] [-t] [-h]\n Produce star trails video, by default suitable for smooth looping\n -k Produce 4K video\n -a Use HAP video codec\n -t Include title and explanation frames. Resulting video is not suitable for smooth looping\n -h help\n"
 RESOLUTION="1920x1080"
 IMFOLDER="images-2k"
 CODEC="libx264"

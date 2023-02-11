@@ -117,3 +117,4 @@ To generate a video in the format requested by [Rabo Studio](https://zakelijk.fo
 makevideo.sh -k -a
 ffmpeg -i trails.mov -vf "crop=3720:1104" -vcodec hap trails-cropped.mov
 ```
+This also automatically puts the video in the correct native resolution.
